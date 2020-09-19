@@ -199,6 +199,10 @@ public class NetworkClient {
      * 获取网络信号
      */
     public int getAsuInfo() {
+        return asuInfo;
+    }
+
+    public int getNetSignal(){
         return convertNetSignal();
     }
 
