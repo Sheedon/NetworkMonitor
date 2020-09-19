@@ -27,11 +27,13 @@ public class MainActivity extends AppCompatActivity implements NetworkListener {
     }
 
     public void onTouchClick(View view) {
-        int asuInfo = NetworkClient.getInstance().getAsuInfo();
-        int networkState = NetworkClient.getInstance().getNetworkState();
-        int networkType = NetworkClient.getInstance().getNetworkType();
+//        int asuInfo = NetworkClient.getInstance().getAsuInfo();
+//        int networkState = NetworkClient.getInstance().getNetworkState();
+//        int networkType = NetworkClient.getInstance().getNetworkType();
+//
+//        onState(networkState, networkType, asuInfo);
 
-        onState(networkState, networkType, asuInfo);
+        NetworkClient.getInstance().queryCurrentNetworkState();
     }
 
     @Override

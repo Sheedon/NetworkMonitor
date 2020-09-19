@@ -38,6 +38,8 @@ public class NetworkClient {
     // 网络信号的值
     private int asuInfo = -1000;
 
+    private long lastTime;
+
     private Set<NetworkListener> listeners = new LinkedHashSet<>();
 
     public static NetworkClient getInstance() {
@@ -205,6 +207,17 @@ public class NetworkClient {
      */
     public int getNetworkType() {
         return networkType;
+    }
+
+    public void queryCurrentNetworkState() {
+        long nowTime = System.currentTimeMillis();
+        if (nowTime - lastTime <= 1000) {
+            return;
+        }
+
+        lastTime = nowTime;
+
+        convertNetworkState();
     }
 
     private void noticeNetwork() {
