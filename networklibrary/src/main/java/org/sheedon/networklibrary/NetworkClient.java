@@ -4,9 +4,11 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.telephony.PhoneStateListener;
 import android.telephony.SignalStrength;
 import android.telephony.TelephonyManager;
@@ -39,6 +41,8 @@ public class NetworkClient {
     private int asuInfo = -1000;
 
     private long lastTime;
+
+    private NetBroadcastReceiver netBroadcastReceiver;
 
     private Set<NetworkListener> listeners = new LinkedHashSet<>();
 
@@ -74,6 +78,16 @@ public class NetworkClient {
                     | PhoneStateListener.LISTEN_DATA_CONNECTION_STATE);
         }
 
+        //Android 7.0以上需要动态注册
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            //实例化IntentFilter对象
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("android.net.conn.CONNECTIVITY_CHANGE");
+            netBroadcastReceiver = new NetBroadcastReceiver();
+            //注册广播接收
+            application.registerReceiver(netBroadcastReceiver, filter);
+        }
+
 
         if (ActivityCompat.checkSelfPermission(application, Manifest.permission.READ_PHONE_STATE)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -93,6 +107,10 @@ public class NetworkClient {
             return;
 
         listeners.remove(listener);
+    }
+
+    public void updateNetState() {
+        convertNetworkState();
     }
 
     /**
@@ -286,6 +304,8 @@ public class NetworkClient {
         if (listeners != null) {
             listeners.clear();
         }
+
+
 
         listeners = null;
         if (phoneStateListener != null && manager != null) {
